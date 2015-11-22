@@ -5,16 +5,13 @@
     xmlns:local="using:WpControls.PositionControl"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
-    
-    <Grid>
+    mc:Ignorable="d">
+    <Grid x:Name="MainGrid">
 
         <Canvas Height="Auto" Width="Auto" x:Name="LayoutRoot">
-            <Ellipse  Fill="#FFF4F4F5" Height="Auto" Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Width="Auto"/>
 
-            <Ellipse ManipulationMode="All" ManipulationDelta="Ellipse_ManipulationDelta" Fill="Red" Height="40" Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Width="40"/>
+            <Ellipse x:Name="CenterEllipse"  Fill="#FFFFFF" Height="200" Width="200" />
+            <Ellipse x:Name="ManipulatePoint" Fill="Red" Height="40" Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Width="40"/>
 
         </Canvas>
 

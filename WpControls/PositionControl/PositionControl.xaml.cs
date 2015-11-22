@@ -22,11 +22,48 @@ namespace WpControls.PositionControl
         public PositionControl()
         {
             this.InitializeComponent();
+
+            Loaded += PositionControl_Loaded;
+
+            ManipulatePoint.ManipulationMode = ManipulationModes.All;
+
+
+            ManipulatePoint.ManipulationDelta += ManipulatePoint_ManipulationDelta;
+            ManipulatePoint.ManipulationCompleted += ManipulatePoint_ManipulationCompleted;
+
         }
 
-     
+       
 
-        private void Ellipse_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void PositionControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetLayout();
+        }
+
+        private void SetLayout()
+        {
+            var heigth = MainGrid.ActualHeight;
+            var width = MainGrid.ActualWidth;
+
+            LayoutRoot.Height = heigth;
+            LayoutRoot.Width = width;
+
+            CenterEllipse.Width = width;
+            CenterEllipse.Height = width;
+
+            
+
+            Canvas.SetLeft(ManipulatePoint, width / 2 - ManipulatePoint.Width / 2);
+            Canvas.SetTop(ManipulatePoint, heigth / 2 - ManipulatePoint.Height / 2);
+
+
+            Canvas.SetLeft(CenterEllipse, width / 2 - CenterEllipse.Width / 2);
+            Canvas.SetTop(CenterEllipse, heigth / 2 - CenterEllipse.Height / 2);
+
+
+        }
+
+        private void ManipulatePoint_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             FrameworkElement elem = sender as FrameworkElement;
             if (elem == null)
@@ -34,6 +71,8 @@ namespace WpControls.PositionControl
 
             double left = Canvas.GetLeft(elem);
             double top = Canvas.GetTop(elem);
+
+            
 
             left += e.Delta.Translation.X;
             top += e.Delta.Translation.Y;
@@ -43,23 +82,28 @@ namespace WpControls.PositionControl
             {
                 left = 0;
             }
-            else if (left > (LayoutRoot.ActualWidth - elem.ActualWidth))
+            else if (left > (CenterEllipse.ActualWidth - elem.ActualWidth))
             {
-                left = LayoutRoot.ActualWidth - elem.ActualWidth;
+                left = CenterEllipse.ActualWidth - elem.ActualWidth;
             }
 
-            if (top < 0)
+            if (top < Canvas.GetTop(CenterEllipse))
             {
-                top = 0;
+                top = Canvas.GetTop(CenterEllipse);
             }
-            else if (top > (LayoutRoot.ActualHeight - elem.ActualHeight))
+            else if (top > (Canvas.GetTop(CenterEllipse) + CenterEllipse.ActualHeight - elem.ActualHeight))
             {
-                top = LayoutRoot.ActualHeight - elem.ActualHeight;
+                top = Canvas.GetTop(CenterEllipse) + CenterEllipse.ActualHeight - elem.ActualHeight;
             }
 
             Canvas.SetLeft(elem, left);
             Canvas.SetTop(elem, top);
 
+        }
+
+        private void ManipulatePoint_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            
         }
     }
 }

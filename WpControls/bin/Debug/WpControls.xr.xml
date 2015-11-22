@@ -15,12 +15,10 @@
     <RootType FullName="Windows.UI.Xaml.Shapes.Ellipse">
       <RootProperty Name="Fill" />
       <RootProperty Name="Height" />
+      <RootProperty Name="Width" />
       <RootProperty Name="Stroke" />
       <RootProperty Name="HorizontalAlignment" />
       <RootProperty Name="VerticalAlignment" />
-      <RootProperty Name="Width" />
-      <RootProperty Name="ManipulationMode" />
-      <RootEvent Name="ManipulationDelta" />
     </RootType>
     <RootType FullName="WpControls.PositionControl.PositionControl" />
   </Roots.RootTypes>
