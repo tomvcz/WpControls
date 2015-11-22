@@ -7,8 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Grid x:Name="MainGrid">
-
-        <Canvas Height="Auto" Width="Auto" x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+            <TextBox x:Name="txtValueX"/>
+            <TextBox x:Name="txtValueY"/>
+        </StackPanel>
+        <Canvas Grid.Row="1" Height="Auto" Width="Auto" x:Name="LayoutRoot">
 
             <Ellipse x:Name="CenterEllipse"  Fill="#FFFFFF" Height="200" Width="200" />
             <Ellipse x:Name="ManipulatePoint" Fill="Red" Height="40" Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Width="40"/>

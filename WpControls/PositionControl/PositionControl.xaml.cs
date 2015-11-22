@@ -19,6 +19,64 @@ namespace WpControls.PositionControl
 {
     public sealed partial class PositionControl : UserControl
     {
+        #region Properties
+
+        /// <summary>
+        /// Minimální hodnota
+        /// </summary>
+        public int Min
+        {
+            get { return (int)GetValue(MinProperty); }
+            set { SetValue(MinProperty, value); }
+        }
+
+        /// <summary>
+        /// Maximální hodnota
+        /// </summary>
+        public int Max
+        {
+            get { return (int)GetValue(MaxProperty); }
+            set { SetValue(MaxProperty, value); }
+        }
+
+        /// <summary>
+        /// Aktualní hodtona osy X
+        /// </summary>
+        public int ValueX
+        {
+            get { return (int)GetValue(ValueXProperty); }
+            set { SetValue(ValueXProperty, value); }
+        }
+
+        /// <summary>
+        /// Aktuální hodnota osy Y
+        /// </summary>
+        public int ValueY
+        {
+            get { return (int)GetValue(ValueYProperty); }
+            set { SetValue(ValueYProperty, value); }
+        }
+
+        #endregion
+
+        #region Dependency properties
+
+        private DependencyProperty MinProperty = DependencyProperty.Register("Min", typeof(int), typeof(PositionControl), new PropertyMetadata(0));
+
+        private DependencyProperty MaxProperty = DependencyProperty.Register("Max", typeof(int), typeof(PositionControl), new PropertyMetadata(200));
+
+        private DependencyProperty ValueXProperty = DependencyProperty.Register("ValueX", typeof(int), typeof(PositionControl), new PropertyMetadata(0));
+
+        private DependencyProperty ValueYProperty = DependencyProperty.Register("ValueY", typeof(int), typeof(PositionControl), new PropertyMetadata(0));
+
+
+        #endregion
+
+        private double maxLeft;
+        private double minLeft;
+        private double minTop;
+        private double maxTop;
+
         public PositionControl()
         {
             this.InitializeComponent();
@@ -27,17 +85,14 @@ namespace WpControls.PositionControl
 
             ManipulatePoint.ManipulationMode = ManipulationModes.All;
 
-
             ManipulatePoint.ManipulationDelta += ManipulatePoint_ManipulationDelta;
             ManipulatePoint.ManipulationCompleted += ManipulatePoint_ManipulationCompleted;
-
         }
-
-       
 
         private void PositionControl_Loaded(object sender, RoutedEventArgs e)
         {
             SetLayout();
+            SetValues(Canvas.GetTop(ManipulatePoint), Canvas.GetLeft(ManipulatePoint));
         }
 
         private void SetLayout()
@@ -51,16 +106,32 @@ namespace WpControls.PositionControl
             CenterEllipse.Width = width;
             CenterEllipse.Height = width;
 
-            
-
             Canvas.SetLeft(ManipulatePoint, width / 2 - ManipulatePoint.Width / 2);
             Canvas.SetTop(ManipulatePoint, heigth / 2 - ManipulatePoint.Height / 2);
-
 
             Canvas.SetLeft(CenterEllipse, width / 2 - CenterEllipse.Width / 2);
             Canvas.SetTop(CenterEllipse, heigth / 2 - CenterEllipse.Height / 2);
 
+            maxLeft = CenterEllipse.ActualWidth - ManipulatePoint.ActualWidth;
+            minLeft = 0;
 
+            maxTop = Canvas.GetTop(CenterEllipse) + CenterEllipse.ActualHeight - ManipulatePoint.ActualHeight;
+            minTop = Canvas.GetTop(CenterEllipse);
+
+
+        }
+
+        private void SetValues(double top, double left)
+        {
+            var x = (Max / (maxLeft - minLeft)) * (left - minLeft);
+
+            var y = (Max / (maxTop - minTop)) * (top - minTop);
+
+            ValueX = (int)x;
+            ValueY = (int)y;
+
+            txtValueX.Text = string.Format("X: {0}", ValueX);
+            txtValueY.Text = string.Format("Y: {0}", ValueY);
         }
 
         private void ManipulatePoint_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -72,38 +143,40 @@ namespace WpControls.PositionControl
             double left = Canvas.GetLeft(elem);
             double top = Canvas.GetTop(elem);
 
-            
+
 
             left += e.Delta.Translation.X;
             top += e.Delta.Translation.Y;
 
             //check for bounds
-            if (left < 0)
+            if (left < minLeft)
             {
-                left = 0;
+                left = minLeft;
             }
-            else if (left > (CenterEllipse.ActualWidth - elem.ActualWidth))
+            else if (left > maxLeft)
             {
-                left = CenterEllipse.ActualWidth - elem.ActualWidth;
+                left = maxLeft;
             }
 
-            if (top < Canvas.GetTop(CenterEllipse))
+            if (top < minTop)
             {
-                top = Canvas.GetTop(CenterEllipse);
+                top = minTop;
             }
-            else if (top > (Canvas.GetTop(CenterEllipse) + CenterEllipse.ActualHeight - elem.ActualHeight))
+            else if (top > maxTop)
             {
-                top = Canvas.GetTop(CenterEllipse) + CenterEllipse.ActualHeight - elem.ActualHeight;
+                top = maxTop;
             }
 
             Canvas.SetLeft(elem, left);
             Canvas.SetTop(elem, top);
 
+
+            SetValues(top, left);
         }
 
         private void ManipulatePoint_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            
+
         }
     }
 }
